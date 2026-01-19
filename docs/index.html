@@ -1,0 +1,1530 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="description" content="Idea First, Code Later: editorial-centric evaluation for LLMs in competitive programming." />
+  <title>Idea First, Code Later</title>
+  <link rel="icon" type="image/svg+xml" href="assets/figs/favicon.svg">
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+      min-height: 100vh;
+    }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    :root{
+      --bg: #fafafa;
+      --text: #111;
+      --muted: #666;
+      --muted2: #888;
+      --border: #e5e5e5;
+      --accent: #6366f1;
+      --accent-light: #eef2ff;
+      --success: #10b981;
+      --maxw: 1200px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --pu: #385776;
+      --alg: #741B47;
+      --cor: #A16E08;
+      --sheet-hdr: #f3f4f6;
+    }
+    *{ box-sizing: border-box; }
+    html{ scroll-behavior: smooth; }
+    body{
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text);
+      background: var(--bg);
+    }
+    a{ color: var(--accent); text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+
+    .wrap{ max-width: var(--maxw); margin: 0 auto; padding: 0 24px 80px; }
+
+    /* Card effect for main content */
+    .wrap, .hero, .insight, .method, .table-wrap, .sheet-wrap, .results-table-wrap, figure {
+      box-shadow: 0 2px 16px rgba(99,102,241,0.04), 0 1.5px 8px rgba(0,0,0,0.03);
+    }
+
+    /* Nav */
+    .nav{
+      background: rgba(250,250,250,0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-inner{
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand{ font-weight: 600; font-size: 14px; color: var(--text); text-decoration: none; }
+    .nav-links{ display: flex; gap: 24px; font-size: 14px; }
+    .nav-links a{ text-decoration: none; color: var(--muted); transition: color 0.15s; }
+    .nav-links a:hover{ color: var(--text); }
+
+    /* Hero */
+    .hero{
+      text-align: center;
+      padding: 90px 24px 70px;
+      background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
+      border-radius: 0 0 32px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero:before {
+      content: '';
+      position: absolute;
+      top: -120px; left: 50%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, #6366f1 0%, #fff0 70%);
+      opacity: 0.08;
+      transform: translateX(-50%);
+      z-index: 0;
+    }
+    .hero h1{
+      font-size: 3.2em;
+      font-weight: 800;
+      margin: 0 0 20px;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      color: var(--text);
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 2px 8px #eef2ff;
+    }
+    .hero .tagline{
+      font-size: 1.25em;
+      color: var(--muted);
+      max-width: 640px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+      margin-top: 32px;
+    }
+    .hero .authors{
+      font-size: 15px;
+      color: var(--muted2);
+      margin-bottom: 8px;
+    }
+    .hero .affiliations{
+      font-size: 13px;
+      color: var(--muted2);
+      margin-bottom: 32px;
+    }
+    .links{ display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .links a{
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+    .links a.primary{
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 2px 8px #6366f12a;
+      border: none;
+    }
+    .links a.primary:hover{
+      background: #4f46e5;
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 4px 16px #6366f13a;
+    }
+    .links a.secondary{
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 4px #6366f11a;
+    }
+    .links a.secondary:hover{
+      border-color: #ccc;
+      background: #f5f7ff;
+      transform: translateY(-1px) scale(1.03);
+    }
+    .links img{ width: 18px; height: 18px; }
+
+    /* Key result banner */
+    .key-result{
+      background: var(--accent-light);
+      border: 1px solid #c7d2fe;
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin: 40px auto;
+      max-width: 700px;
+      text-align: center;
+    }
+    .key-result .number{
+      font-size: 3em;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .key-result .label{
+      font-size: 15px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    /* Sections */
+    section{ margin-bottom: 64px; }
+    h2{
+      font-size: 1.75em;
+      font-weight: 700;
+      margin: 0 0 20px;
+      letter-spacing: -0.02em;
+    }
+    h3{ font-size: 1.2em; font-weight: 600; margin: 32px 0 12px; }
+    p{ margin: 0 0 16px; color: var(--text); }
+
+    /* Method cards */
+    .methods{
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 28px 0;
+    }
+    @media (max-width: 700px){ .methods{ grid-template-columns: 1fr; } }
+    .method{
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 24px 24px 24px;
+      transition: box-shadow 0.2s, transform 0.2s;
+      box-shadow: 0 2px 12px #6366f11a;
+    }
+    .method:hover{
+      box-shadow: 0 8px 32px #6366f13a;
+      transform: translateY(-4px) scale(1.03);
+    }
+    .method h4{
+      font-size: 15px;
+      font-weight: 600;
+      margin: 0 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .method .tag{
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+    .method code{
+      display: block;
+      font-size: 13px;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .method p{ font-size: 14px; color: var(--muted); margin: 0; }
+
+    /* Figures */
+    figure{
+      margin: 32px 0;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    figure img{ width: 100%; display: block; }
+    figcaption{
+      padding: 16px 20px;
+      font-size: 14px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      background: #fafafa;
+    }
+    
+    /* Hero figure (pipeline diagram) */
+    .hero-figure{
+      margin: 0;
+      border: 2px solid var(--accent);
+      box-shadow: 0 8px 32px rgba(99, 102, 241, 0.12);
+    }
+    .hero-figure figcaption{
+      padding: 20px 24px;
+      font-size: 15px;
+      line-height: 1.7;
+      background: linear-gradient(135deg, #f8f9ff, #faf5ff);
+      border-top: 2px solid var(--accent);
+    }
+    .hero-figure figcaption strong:first-child{
+      display: block;
+      font-size: 16px;
+      color: var(--fg);
+      margin-bottom: 12px;
+    }
+
+    /* Tables */
+    .table-wrap{
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 24px 0;
+    }
+    table{ width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td{ padding: 14px 16px; text-align: left; }
+    th{ background: #fafafa; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+    td{ border-top: 1px solid var(--border); }
+    tr:hover td{ background: #fafafa; }
+    .highlight-row td{ background: var(--accent-light) !important; font-weight: 600; }
+
+    /* Code */
+    code, pre{ font-family: var(--mono); }
+    pre{
+      background: #1e1e1e;
+      color: #d4d4d4;
+      border-radius: 12px;
+      padding: 20px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    code{ font-size: 0.9em; background: #f0f0f0; padding: 2px 6px; border-radius: 4px; }
+    pre code{ background: none; padding: 0; }
+
+    /* Details */
+    details{
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin: 20px 0;
+    }
+    summary{
+      cursor: pointer;
+      padding: 16px 20px;
+      font-weight: 600;
+      font-size: 15px;
+    }
+    details[open] summary{ border-bottom: 1px solid var(--border); }
+    details > *:not(summary){ padding: 0 20px; }
+    details > *:last-child{ padding-bottom: 20px; }
+
+    /* Two column grid */
+    .grid2{ display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 700px){ .grid2{ grid-template-columns: 1fr; } }
+
+    /* Insight cards */
+    .insights{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 28px 0; }
+    @media (max-width: 700px){ .insights{ grid-template-columns: 1fr; } }
+    .insight{
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .insight h4{ font-size: 15px; font-weight: 600; margin: 0 0 8px; }
+    .insight p{ font-size: 14px; color: var(--muted); margin: 0; }
+
+    /* Full results table */
+    .results-table-wrap{
+      overflow-x: auto;
+      margin: 28px 0;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+    }
+    .results-table{
+      width: 100%;
+      min-width: 1200px;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .results-table th, .results-table td{
+      padding: 10px 12px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .results-table th{ background: #fafafa; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; position: sticky; top: 0; z-index: 1; }
+    .results-table td:first-child{ text-align: left; font-weight: 500; position: sticky; left: 0; background: white; z-index: 1; }
+    .results-table th:first-child{ position: sticky; left: 0; z-index: 2; }
+    .results-table .section-header{ background: linear-gradient(90deg, #f0f4ff, #faf5ff); font-weight: 600; color: var(--accent); }
+    .results-table .section-header td{ position: static; background: transparent; }
+    .results-table .section-header.open{ background: linear-gradient(90deg, #ecfdf5, #f0fdf4); color: #059669; }
+    .results-table .avg-row{ background: #fafafa; font-style: italic; }
+    .results-table .avg-row td:first-child{ background: #fafafa; }
+    .results-table .overall-row{ background: var(--accent-light); font-weight: 600; }
+    .results-table .overall-row td:first-child{ background: var(--accent-light); }
+    .results-table .model-name{ min-width: 140px; }
+    
+    /* Delta colors */
+    .delta-pos{ background: #dcfce7; color: #166534; }
+    .delta-pos-strong{ background: #bbf7d0; color: #166534; }
+    .delta-pos-max{ background: #86efac; color: #14532d; font-weight: 600; }
+    .delta-neg{ background: #fee2e2; color: #991b1b; }
+    .delta-neg-strong{ background: #fecaca; color: #991b1b; }
+    .delta-neutral{ background: #f5f5f5; color: #666; }
+    .results-table small{ display: block; font-size: 10px; opacity: 0.9; margin-top: 2px; }
+    
+    .best{ font-weight: 700; }
+    .second{ text-decoration: underline; text-underline-offset: 2px; }
+
+    /* Pills (Excel-ish legend chips) */
+    .pill{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .pill.green{ background:#ecfdf5; border-color:#a7f3d0; color:#065f46; }
+    .pill.red{ background:#fef2f2; border-color:#fecaca; color:#991b1b; }
+    .pill.yellow{ background:#fffbeb; border-color:#fde68a; color:#92400e; }
+    .pill.gray{ background:#f3f4f6; border-color:#e5e7eb; color:#374151; }
+    .pill.blue{ background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8; }
+
+    /* Excel-like sheet table */
+    .sheet-wrap{
+      overflow-x: auto;
+      margin: 20px 0 28px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+    }
+    .sheet-table{
+      width: 100%;
+      min-width: 1100px;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 13px;
+    }
+    .sheet-table th,
+    .sheet-table td{
+      padding: 10px 12px;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .sheet-table th:last-child,
+    .sheet-table td:last-child{ border-right: none; }
+
+    .sheet-table thead th{
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    /* Group header row */
+    .sheet-table .grp th{
+      color: #fff;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-bottom: none;
+    }
+    .sheet-table .grp .g-meta{ background: #111; }
+    .sheet-table .grp .g-pu{ background: var(--pu); }
+    .sheet-table .grp .g-alg{ background: var(--alg); }
+    .sheet-table .grp .g-cor{ background: var(--cor); }
+
+    /* Subheader row */
+    .sheet-table .sub th{
+      background: var(--sheet-hdr);
+      color: #374151;
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      z-index: 3;
+    }
+
+    /* First column sticky like spreadsheets */
+    .sheet-table th.sticky,
+    .sheet-table td.sticky{
+      position: sticky;
+      left: 0;
+      z-index: 4;
+      background: #fff;
+    }
+    .sheet-table thead th.sticky{ z-index: 5; background: var(--sheet-hdr); }
+    .sheet-table .grp th.sticky{ background:#111; z-index: 6; }
+
+    /* Rubric details blocks with colored left border */
+    .rubric details{ margin: 14px 0; }
+    .rubric details summary{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .rubric-dot{
+      width: 10px; height: 10px; border-radius: 999px;
+    }
+    .rubric-dot.pu{ background: var(--pu); }
+    .rubric-dot.alg{ background: var(--alg); }
+    .rubric-dot.cor{ background: var(--cor); }
+
+    .rubric-note{
+      padding: 14px 20px 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .rubric-table-wrap{
+      padding: 0 20px 18px;
+    }
+    .rubric-table{
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    .rubric-table th, .rubric-table td{
+      padding: 10px 12px;
+      border-top: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+    .rubric-table th{
+      background: #fafafa;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+
+    /* Footer */
+    footer{
+      text-align: center;
+      padding: 40px 0 60px 0;
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--muted2);
+      background: linear-gradient(90deg, #eef2ff 0%, #fafafa 100%);
+      border-radius: 0 0 24px 24px;
+      margin-top: 60px;
+    }
+
+    /* Scroll to top button */
+    #scrollTopBtn {
+      display: none;
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      z-index: 999;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      font-size: 2em;
+      box-shadow: 0 2px 12px #6366f13a;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+    #scrollTopBtn:hover {
+      background: #4f46e5;
+      transform: scale(1.08);
+    }
+  </style>
+  </style>
+</head>
+
+<body>
+    <button id="scrollTopBtn" title="Back to top">↑</button>
+    <script>
+      // Show scroll-to-top button
+      const scrollBtn = document.getElementById('scrollTopBtn');
+      window.onscroll = function() {
+        if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+          scrollBtn.style.display = 'block';
+        } else {
+          scrollBtn.style.display = 'none';
+        }
+      };
+      scrollBtn.onclick = function() {
+        window.scrollTo({top: 0, behavior: 'smooth'});
+      };
+    </script>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#" class="brand">Idea First, Code Later</a>
+      <div class="nav-links">
+        <a href="#abstract">Abstract</a>
+        <a href="#method">Method</a>
+        <a href="#dataset">Dataset</a>
+        <a href="#results">Results</a>
+        <a href="#annotations">Annotations</a>
+        <a href="#citation">Citation</a>
+      </div>
+    </div>
+  </nav>
+
+
+  <div class="hero">
+    <h1>Idea First, Code Later</h1>
+    <p class="subtitle" style="font-size: 2em; color: var(--muted); max-width: 720px; margin: -12px auto 24px; font-weight: 400;">
+      Disentangling Problem Solving from Code Generation in Evaluating LLMs for Competitive Programming
+    </p>
+    <div class="authors-block" style="margin-bottom: 10px;">
+      <span class="authors-list" style="display: block; font-size: 1.08em; font-weight: 500; color: var(--text);">
+        <a href="https://www.linkedin.com/in/sama-hadhoud/?originalSubdomain=ae" target="_blank" style="color:var(--accent);text-decoration:none;">Sama Hadhoud</a><sup>1</sup> &nbsp; 
+        <a href="https://www.linkedin.com/in/alaa-ahmed-b191201a9/" target="_blank" style="color:var(--accent);text-decoration:none;">Alaa Elsetohy</a><sup>1</sup> &nbsp; 
+        <a href="https://www.linkedin.com/in/sama-hadhoud/?originalSubdomain=ae" target="_blank" style="color:var(--accent);text-decoration:none;">Frederikus Hudi</a><sup>2</sup> &nbsp; 
+        <a href="https://blaisecruz.com/" target="_blank" style="color:var(--accent);text-decoration:none;">Jan Christian Blaise Cruz</a><sup>1</sup> &nbsp; 
+        <a href="https://www.comp.nus.edu.sg/~stevenha/" target="_blank" style="color:var(--accent);text-decoration:none;">Steven Halim</a><sup>3</sup> &nbsp; 
+        <a href="https://afaji.github.io/" target="_blank" style="color:var(--accent);text-decoration:none;">Alham Fikri Aji</a><sup>1</sup>
+      </span>
+      <span class="affiliations-list" style="display: block; font-size: 0.98em; color: var(--muted2); margin: 2px 0 0 0;">
+        <sup>1</sup>MBZUAI &nbsp; <sup>2</sup>NAIST &nbsp; <sup>3</sup>National University of Singapore
+      </span>
+    </div>
+    <div class="links">
+      <a href="https://arxiv.org/abs/2601.11332" class="primary" target="_blank">
+        📄 Read Paper
+      </a>
+      <a href="https://huggingface.co/datasets/samahadhoud/idea-first-code-later-cp" class="secondary" target="_blank">
+        🤗 Dataset
+      </a>
+    </div>
+
+
+    <div class="tagline-card" style="max-width: 600px; margin: 36px auto 0; background: #f5f7ff; border: 1.5px solid #c7d2fe; border-radius: 14px; box-shadow: 0 2px 12px #6366f11a; padding: 28px 32px 22px 32px; display: flex; align-items: flex-start; gap: 18px;">
+      <span style="font-size: 2.1em; color: #6366f1; margin-top: 2px;">💡</span>
+      <div style="flex:1;">
+        <div style="font-size: 1.13em; font-weight: 600; color: var(--text); margin-bottom: 6px; line-height: 1.5;">
+          Competitive programming primarily evaluates <span style="color:#4f46e5; font-weight:700;">algorithmic problem solving</span> rather than <span style="color:#d32f2f; font-weight:700;">code generation</span>.
+        </div>
+        <div style="font-size: 1.04em; color: var(--muted); line-height: 1.7;">
+          Accordingly, we evaluate LLMs by <span style="color:#4f46e5; font-weight:600;">separating algorithmic reasoning from implementation</span> via natural-language editorials.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="wrap">
+
+    <section id="abstract">
+
+
+  <div class="wrap" style="max-width: 900px; margin: 0 auto; padding: 0 24px 32px;">
+    <section id="paper-abstract" style="margin-bottom: 40px;">
+      <h2 style="font-size:1.3em; font-weight:700; margin-bottom: 12px; letter-spacing: -0.01em;">Abstract</h2>
+      <p style="font-size:1.08em; color:var(--muted); line-height:1.8; margin:0;">
+        Large Language Models (LLMs) increasingly succeed on competitive programming problems, yet existing evaluations conflate algorithmic reasoning with code-level implementation. We argue that competitive programming is fundamentally a problem-solving task and propose centering natural-language editorials in both solution generation and evaluation. Generating an editorial prior to code improves solve rates for some LLMs, with substantially larger gains when using expertly written gold editorials. However, even with gold editorials, models continue to struggle with implementation, while the gap between generated and gold editorials reveals a persistent problem-solving bottleneck in specifying correct and complete algorithms. Beyond pass/fail metrics, we diagnose reasoning errors by comparing model-generated editorials to gold standards using expert annotations and validate an LLM-as-a-judge protocol for scalable evaluation. We introduce a dataset of 83 ICPC-style problems with gold editorials and full test suites, and evaluate 19 LLMs, arguing that future benchmarks should explicitly separate problem solving from implementation.
+      </p>
+    </section>
+  </div>
+
+    </section>
+
+    <section id="pipeline">
+      <h2>Pipeline Overview</h2>
+      <p>
+       Competitive programming is fundamentally a problem-solving task: deriving the right algorithm under strict constraints.
+        Yet LLM evaluations often collapse everything into pass/fail, mixing up reasoning failures (wrong idea) and implementation failures (right idea, wrong code).
+We fix this by making the “idea” explicit: we use natural-language editorials as an intermediate step, allowing us to evaluate planning and coding separately.</p>
+
+      <figure class="hero-figure">
+        <img src="assets/figs/cp_graph.png" alt="Evaluation pipeline and editorial annotation scheme" />
+        <figcaption>
+            <p>
+  <strong>Overview of our evaluation pipeline and editorial annotation scheme.</strong>
+  Left: three settings, <strong>w/oEd</strong> (problem &rarr; code, baseline), <strong>w/GenEd</strong> (problem &rarr; generated editorial &rarr; code), and <strong>w/GoldEd</strong> (problem plus gold editorial &rarr; code).
+  
+  Right: the LLM-generated editorial annotation rubric used to diagnose reasoning quality, covering
+  <em>Problem Understanding</em> (PU-W, PU-M, PU-X, PU-D),
+  <em>Algorithm Description</em> (ALG-TAG vs. Golden-ALG-TAG),
+  and <em>Algorithm Correctness</em> (ALG-COR, correctness type, error type, and severity).
+</p>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section id="method">
+      <h2>Three Evaluation Settings</h2>
+      <p>
+        We test each model in three conditions to isolate different capabilities:
+      </p>
+
+<div class="methods">
+  <div class="method">
+    <h4>w/oEd <span class="tag">Baseline</span></h4>
+    <code>Problem → Code</code>
+    <p>
+      Code-only baseline: the model is asked to solve the problem directly. This mirrors standard CP benchmarks and
+      <em>conflates</em> algorithmic reasoning with implementation—so when a submission fails, the failure mode is ambiguous
+      (incorrect planning, incorrect coding, or both).
+    </p>
+  </div>
+
+  <div class="method">
+    <h4>w/GenEd <span class="tag">Self-Planning</span></h4>
+    <code>Problem → Editorial → Code</code>
+    <p>
+      Generated editorial: we first ask the model to write an editorial and then generate code conditioned on it.
+      The editorial is generated once and kept fixed, helping <em>isolate model-generated reasoning</em> from implementation:
+      failures can stem from an incorrect or incomplete plan, or from failing to faithfully implement a correct plan.
+    </p>
+  </div>
+
+  <div class="method">
+    <h4>w/GoldEd <span class="tag">Oracle Plan</span></h4>
+    <code>Problem + Editorial → Code</code>
+    <p>
+      Gold editorial: we provide an expert-written gold editorial to estimate performance under correct reasoning.
+      This approximates an upper bound given a correct plan and <em>isolates implementation limitations</em>—any remaining
+      errors therefore arise from implementation.
+    </p>
+  </div>
+</div>
+
+
+    <section id="dataset">
+      <h2>Dataset (<a href="https://huggingface.co/datasets/samahadhoud/idea-first-code-later-cp"> View Dataset</a>)</h2> 
+      <p>
+        We curate <strong>83 ICPC-style problems</strong> from 7 contests spanning 2017–2025. Each comes with the original problem statement, a gold editorial from problem setters or testers, and the full official test suite.
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Contest</th><th>Years</th><th>Problems</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>CS3233 Midterm (NUS)</td><td>2023–2025</td><td>34</td></tr>
+            <tr><td>ICPC Asia Pacific Championship</td><td>2024</td><td>13</td></tr>
+            <tr><td>ICPC Asia Jakarta Regional</td><td>2017–2019</td><td>36</td></tr>
+            <tr class="highlight-row"><td colspan="2">Total</td><td>83</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        Judging is ICPC-style: compile, run on all tests, accept only if <em>every</em> test passes within limits. No partial credit.
+      </p>
+    </section>
+
+<section id="results">
+  <h2>Results</h2>
+
+  <div class="insights">
+    <div class="insight">
+      <h4>🏅 Gold editorials yield large and consistent gains</h4>
+      <p>
+        On average, providing a gold editorial yields a large absolute gain: pass@1 increases from
+        <strong>23.2%</strong> (w/oEd) to <strong>37.7%</strong> (w/GoldEd), i.e., <strong>+14.5</strong> points.
+        Gold editorials substantially improve performance across all difficulties.
+      </p>
+    </div>
+
+    <div class="insight">
+      <h4>🧱 Gold editorials isolate an implementation gap</h4>
+      <p>
+        However, performance remains far from saturated even with gold guidance, especially on
+        <strong>T3</strong> (rising only from <strong>8.0%</strong> to <strong>16.5%</strong> on average).
+        This isolates a substantial residual implementation gap: models often struggle to translate a high-level
+        algorithm into correct and efficient code.
+      </p>
+    </div>
+
+    <div class="insight">
+      <h4>📝 Self-generated editorials yield smaller and less reliable changes</h4>
+      <p>
+        In contrast, self-generated editorials yield much smaller and less reliable changes, and can even degrade
+        performance (overall <strong>23.2%</strong> w/oEd vs <strong>23.1%</strong> w/GenEd; on <strong>T3</strong>,
+        <strong>8.0%</strong> to <strong>6.5%</strong>). When the generated editorial is incomplete, overly complex,
+        or subtly wrong, conditioning on it can lock the model into a flawed plan.
+      </p>
+    </div>
+
+    <div class="insight">
+      <h4>🔄 Editorials transfer across models (writer–coder composition)</h4>
+      <p>
+        Editorial transfer improves coding: using editorials from stronger writers often improves weaker coders, and
+        across coders, every cross-model configuration performs at least as well as the coder’s w/GenEd.
+        Overall, these results show that reasoning and implementation can be modularized, with editorials serving as a
+        simple, model-agnostic interface.
+      </p>
+    </div>
+  </div>
+
+
+      <h3>📊 Full Results Table</h3>
+        <p>
+        Pass@1 by difficulty tertile (T1 easiest–T3 hardest).
+        Gold editorials substantially improve performance across all difficulties (up to &sim;30%),
+        but hard problems remain challenging, indicating a residual
+        <strong>implementation bottleneck</strong>.
+        Self-generated editorials yield smaller, model-dependent gains (up to &sim;15%) and sometimes hurt performance,
+        highlighting a persistent
+        <strong>problem-solving gap</strong>
+        in model-generated reasoning.
+        </p>
+
+
+
+
+
+
+
+      
+      <div class="results-table-wrap">
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th rowspan="2" class="model-name">Model</th>
+              <th colspan="3">Overall (83 problems)</th>
+              <th colspan="3">T1 – Easy (26)</th>
+              <th colspan="3">T2 – Medium (28)</th>
+              <th colspan="3">T3 – Hard (29)</th>
+            </tr>
+            <tr>
+              <th>w/oEd</th><th>w/GenEd</th><th>w/GoldEd</th>
+              <th>w/oEd</th><th>w/GenEd</th><th>w/GoldEd</th>
+              <th>w/oEd</th><th>w/GenEd</th><th>w/GoldEd</th>
+              <th>w/oEd</th><th>w/GenEd</th><th>w/GoldEd</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Closed Source Header -->
+            <tr class="section-header">
+              <td colspan="13">Closed Source Models</td>
+            </tr>
+            
+            <tr>
+              <td class="model-name"><span class="best">GPT-5</span></td>
+              <td class="best">67.5%</td>
+              <td class="delta-pos best">68.7% <small>+1.2</small></td>
+              <td class="delta-pos-max best">83.1% <small>+15.7</small></td>
+              <td class="best">92.3%</td>
+              <td class="delta-neg best">88.5% <small>−3.8</small></td>
+              <td class="delta-pos best">96.2% <small>+3.8</small></td>
+              <td class="best">75.0%</td>
+              <td class="delta-neutral best">75.0% <small>+0.0</small></td>
+              <td class="delta-pos-max best">92.9% <small>+17.9</small></td>
+              <td class="best">37.9%</td>
+              <td class="delta-pos-strong best">44.8% <small>+6.9</small></td>
+              <td class="delta-pos-max best">62.1% <small>+24.1</small></td>
+            </tr>
+            
+            <tr>
+              <td class="model-name"><span class="second">O3</span></td>
+              <td class="second">51.8%</td>
+              <td class="delta-neg-strong second">45.8% <small>−6.0</small></td>
+              <td class="delta-pos-strong">63.9% <small>+12.0</small></td>
+              <td class="second">69.2%</td>
+              <td class="delta-pos-strong second">76.9% <small>+7.7</small></td>
+              <td class="delta-pos-strong">80.8% <small>+11.5</small></td>
+              <td class="second">60.7%</td>
+              <td class="delta-neg-strong">46.4% <small>−14.3</small></td>
+              <td class="delta-pos-strong">75.0% <small>+14.3</small></td>
+              <td class="second">27.6%</td>
+              <td class="delta-neg-strong second">17.2% <small>−10.3</small></td>
+              <td class="delta-pos-strong">37.9% <small>+10.3</small></td>
+            </tr>
+            
+            <tr>
+              <td class="model-name">Gemini 2.5 Pro</td>
+              <td>43.4%</td>
+              <td class="delta-pos">45.8% <small>+2.4</small></td>
+              <td class="delta-pos-max second">72.3% <small>+28.9</small></td>
+              <td>69.2%</td>
+              <td class="delta-pos">73.1% <small>+3.8</small></td>
+              <td class="delta-pos-max second">92.3% <small>+23.1</small></td>
+              <td>42.9%</td>
+              <td class="delta-pos-strong second">50.0% <small>+7.1</small></td>
+              <td class="delta-pos-max second">78.6% <small>+35.7</small></td>
+              <td>20.7%</td>
+              <td class="delta-neg">17.2% <small>−3.4</small></td>
+              <td class="delta-pos-max second">48.3% <small>+27.6</small></td>
+            </tr>
+            
+            <tr>
+              <td class="model-name">Gemini 2.5 Flash</td>
+              <td>38.6%</td>
+              <td class="delta-neg">37.3% <small>−1.2</small></td>
+              <td class="delta-pos-strong">54.2% <small>+15.7</small></td>
+              <td>65.4%</td>
+              <td class="delta-pos-strong">73.1% <small>+7.7</small></td>
+              <td class="delta-pos-strong">80.8% <small>+15.4</small></td>
+              <td>39.3%</td>
+              <td class="delta-neg-strong">32.1% <small>−7.1</small></td>
+              <td class="delta-pos-strong">53.6% <small>+14.3</small></td>
+              <td>13.8%</td>
+              <td class="delta-neg">10.3% <small>−3.4</small></td>
+              <td class="delta-pos-strong">31.0% <small>+17.2</small></td>
+            </tr>
+            
+            <tr>
+              <td class="model-name">Claude Opus 4</td>
+              <td>21.7%</td>
+              <td class="delta-pos-strong">30.1% <small>+8.4</small></td>
+              <td class="delta-pos-max">47.0% <small>+25.3</small></td>
+              <td>42.3%</td>
+              <td class="delta-pos-max">57.7% <small>+15.4</small></td>
+              <td class="delta-pos-max">76.9% <small>+34.6</small></td>
+              <td>21.4%</td>
+              <td class="delta-pos-strong">32.1% <small>+10.7</small></td>
+              <td class="delta-pos-max">57.1% <small>+35.7</small></td>
+              <td>3.4%</td>
+              <td class="delta-neutral">3.4% <small>+0.0</small></td>
+              <td class="delta-pos-strong">10.3% <small>+6.9</small></td>
+            </tr>
+            
+            <tr>
+              <td class="model-name">Claude Sonnet 4</td>
+              <td>16.9%</td>
+              <td class="delta-pos">19.3% <small>+2.4</small></td>
+              <td class="delta-pos-max">48.2% <small>+31.3</small></td>
+              <td>34.6%</td>
+              <td class="delta-pos">38.5% <small>+3.8</small></td>
+              <td class="delta-pos-max">73.1% <small>+38.5</small></td>
+              <td>17.9%</td>
+              <td class="delta-neutral">17.9% <small>+0.0</small></td>
+              <td class="delta-pos-max">57.1% <small>+39.3</small></td>
+              <td>0.0%</td>
+              <td class="delta-pos">3.4% <small>+3.4</small></td>
+              <td class="delta-pos-strong">17.2% <small>+17.2</small></td>
+            </tr>
+            
+            <tr>
+              <td class="model-name">GPT-4.1</td>
+              <td>13.3%</td>
+              <td class="delta-pos">17.1% <small>+3.8</small></td>
+              <td class="delta-pos-max">33.7% <small>+20.5</small></td>
+              <td>26.9%</td>
+              <td class="delta-pos-strong">34.6% <small>+7.7</small></td>
+              <td class="delta-pos-max">61.5% <small>+34.6</small></td>
+              <td>3.6%</td>
+              <td class="delta-pos-strong">14.8% <small>+11.2</small></td>
+              <td class="delta-pos-max">32.1% <small>+28.6</small></td>
+              <td>10.3%</td>
+              <td class="delta-neg-strong">3.4% <small>−6.9</small></td>
+              <td class="delta-neutral">10.3% <small>+0.0</small></td>
+            </tr>
+            
+            <tr>
+              <td class="model-name">GPT-4o</td>
+              <td>7.2%</td>
+              <td class="delta-neg">3.6% <small>−3.6</small></td>
+              <td class="delta-pos-strong">13.3% <small>+6.0</small></td>
+              <td>19.2%</td>
+              <td class="delta-neg-strong">7.7% <small>−11.5</small></td>
+              <td class="delta-pos-strong">38.5% <small>+19.2</small></td>
+              <td>0.0%</td>
+              <td class="delta-pos">3.6% <small>+3.6</small></td>
+              <td class="delta-pos">3.6% <small>+3.6</small></td>
+              <td>3.4%</td>
+              <td class="delta-neg">0.0% <small>−3.4</small></td>
+              <td class="delta-neg">0.0% <small>−3.4</small></td>
+            </tr>
+            
+            <tr class="avg-row">
+              <td class="model-name">Closed Source Avg</td>
+              <td>32.5%</td>
+              <td class="delta-pos">33.5% <small>+0.9</small></td>
+              <td class="delta-pos-strong">52.0% <small>+19.4</small></td>
+              <td>52.4%</td>
+              <td class="delta-pos">56.2% <small>+3.8</small></td>
+              <td class="delta-pos-max">75.0% <small>+22.6</small></td>
+              <td>32.6%</td>
+              <td class="delta-pos">34.0% <small>+1.4</small></td>
+              <td class="delta-pos-max">56.2% <small>+23.7</small></td>
+              <td>14.7%</td>
+              <td class="delta-neg">12.5% <small>−2.2</small></td>
+              <td class="delta-pos-strong">27.2% <small>+12.5</small></td>
+            </tr>
+            
+            <!-- Open Source Header -->
+            <tr class="section-header open">
+              <td colspan="13">Open Source Models</td>
+            </tr>
+            
+            <tr>
+              <td class="model-name"><span class="best">GPT-OSS-120B</span></td>
+              <td class="best">41.0%</td>
+              <td class="delta-neg-strong second">31.3% <small>−9.6</small></td>
+              <td class="delta-pos-strong best">59.0% <small>+18.1</small></td>
+              <td class="best">61.5%</td>
+              <td class="delta-neutral second">61.5% <small>+0.0</small></td>
+              <td class="delta-pos-strong best">76.9% <small>+15.4</small></td>
+              <td class="best">50.0%</td>
+              <td class="delta-neg-strong second">32.1% <small>−17.9</small></td>
+              <td class="delta-pos-max best">75.0% <small>+25.0</small></td>
+              <td class="best">13.8%</td>
+              <td class="delta-neg-strong second">3.4% <small>−10.3</small></td>
+              <td class="delta-pos-strong best">27.6% <small>+13.8</small></td>
+            </tr>
+            
+            <tr>
+              <td class="model-name"><span class="second">GPT-OSS-20B</span></td>
+              <td class="second">33.7%</td>
+              <td class="delta-neg-strong">27.7% <small>−6.0</small></td>
+              <td class="delta-pos-strong second">47.0% <small>+13.3</small></td>
+              <td>57.7%</td>
+              <td class="delta-neg">53.8% <small>−3.8</small></td>
+              <td class="delta-pos-strong second">65.4% <small>+7.7</small></td>
+              <td class="second">39.3%</td>
+              <td class="delta-neg-strong">28.6% <small>−10.7</small></td>
+              <td class="delta-pos-strong second">53.6% <small>+14.3</small></td>
+              <td class="second">6.9%</td>
+              <td class="delta-neg">3.4% <small>−3.4</small></td>
+              <td class="delta-pos-strong second">24.1% <small>+17.2</small></td>
+            </tr>
+            
+            <tr>
+              <td class="model-name">DeepSeek-R1</td>
+              <td>28.9%</td>
+              <td class="delta-pos-max best">45.8% <small>+16.9</small></td>
+              <td class="delta-pos-strong">43.4% <small>+14.5</small></td>
+              <td class="second">61.5%</td>
+              <td class="delta-pos-max best">88.5% <small>+26.9</small></td>
+              <td class="delta-pos">65.4% <small>+3.8</small></td>
+              <td>21.4%</td>
+              <td class="delta-pos-max best">39.3% <small>+17.9</small></td>
+              <td class="delta-pos-max">53.6% <small>+32.1</small></td>
+              <td>6.9%</td>
+              <td class="delta-pos-strong best">13.8% <small>+6.9</small></td>
+              <td class="delta-pos-strong">13.8% <small>+6.9</small></td>
+            </tr>
+            
+            <tr>
+              <td class="model-name">Qwen3-8B</td>
+              <td>15.7%</td>
+              <td class="delta-neg">13.3% <small>−2.4</small></td>
+              <td class="delta-pos-strong">24.1% <small>+8.4</small></td>
+              <td>34.6%</td>
+              <td class="delta-neutral">34.6% <small>+0.0</small></td>
+              <td class="delta-pos-strong">42.3% <small>+7.7</small></td>
+              <td>14.3%</td>
+              <td class="delta-neg-strong">7.1% <small>−7.1</small></td>
+              <td class="delta-pos-strong">25.0% <small>+10.7</small></td>
+              <td>0.0%</td>
+              <td class="delta-neutral">0.0% <small>+0.0</small></td>
+              <td class="delta-pos-strong">6.9% <small>+6.9</small></td>
+            </tr>
+            
+            <tr>
+              <td class="model-name">DeepSeek-V3</td>
+              <td>14.5%</td>
+              <td class="delta-neg">9.6% <small>−4.8</small></td>
+              <td class="delta-pos-strong">28.9% <small>+14.5</small></td>
+              <td>34.6%</td>
+              <td class="delta-neg-strong">26.9% <small>−7.7</small></td>
+              <td class="delta-pos-max">61.5% <small>+26.9</small></td>
+              <td>10.7%</td>
+              <td class="delta-neg-strong">3.6% <small>−7.1</small></td>
+              <td class="delta-pos-strong">25.0% <small>+14.3</small></td>
+              <td>0.0%</td>
+              <td class="delta-neutral">0.0% <small>+0.0</small></td>
+              <td class="delta-pos">3.4% <small>+3.4</small></td>
+            </tr>
+            
+            <tr>
+              <td class="model-name">Qwen3-Coder-480B</td>
+              <td>13.3%</td>
+              <td class="delta-neg">10.8% <small>−2.4</small></td>
+              <td class="delta-pos-strong">28.9% <small>+15.7</small></td>
+              <td>23.1%</td>
+              <td class="delta-neg">19.2% <small>−3.8</small></td>
+              <td class="delta-pos-max">61.5% <small>+38.5</small></td>
+              <td>14.3%</td>
+              <td class="delta-neg">10.7% <small>−3.6</small></td>
+              <td class="delta-pos">17.9% <small>+3.6</small></td>
+              <td>3.4%</td>
+              <td class="delta-neutral">3.4% <small>+0.0</small></td>
+              <td class="delta-pos-strong">10.3% <small>+6.9</small></td>
+            </tr>
+            
+            <tr>
+              <td class="model-name">Kimi-K2</td>
+              <td>13.3%</td>
+              <td class="delta-neutral">13.3% <small>+0.0</small></td>
+              <td class="delta-pos-strong">26.5% <small>+13.3</small></td>
+              <td>34.6%</td>
+              <td class="delta-neutral">34.6% <small>+0.0</small></td>
+              <td class="delta-pos-strong">50.0% <small>+15.4</small></td>
+              <td>3.6%</td>
+              <td class="delta-pos second">7.1% <small>+3.6</small></td>
+              <td class="delta-pos-max">28.6% <small>+25.0</small></td>
+              <td>3.4%</td>
+              <td class="delta-neg">0.0% <small>−3.4</small></td>
+              <td class="delta-neutral">3.4% <small>+0.0</small></td>
+            </tr>
+            
+            <tr>
+              <td class="model-name">OlympicCoder-7B</td>
+              <td>6.0%</td>
+              <td class="delta-pos">8.4% <small>+2.4</small></td>
+              <td class="delta-pos">10.8% <small>+4.8</small></td>
+              <td>19.2%</td>
+              <td class="delta-pos-strong">26.9% <small>+7.7</small></td>
+              <td class="delta-pos-strong">26.9% <small>+7.7</small></td>
+              <td>0.0%</td>
+              <td class="delta-neutral">0.0% <small>+0.0</small></td>
+              <td class="delta-pos-strong">7.1% <small>+7.1</small></td>
+              <td>0.0%</td>
+              <td class="delta-neutral">0.0% <small>+0.0</small></td>
+              <td class="delta-neutral">0.0% <small>+0.0</small></td>
+            </tr>
+            
+            <tr>
+              <td class="model-name">Llama-3.1-405B</td>
+              <td>6.0%</td>
+              <td class="delta-neg">2.4% <small>−3.6</small></td>
+              <td class="delta-pos-strong">15.7% <small>+9.6</small></td>
+              <td>19.2%</td>
+              <td class="delta-neg-strong">7.7% <small>−11.5</small></td>
+              <td class="delta-pos-max">42.3% <small>+23.1</small></td>
+              <td>0.0%</td>
+              <td class="delta-neutral">0.0% <small>+0.0</small></td>
+              <td class="delta-pos">3.6% <small>+3.6</small></td>
+              <td>0.0%</td>
+              <td class="delta-neutral">0.0% <small>+0.0</small></td>
+              <td class="delta-pos">3.4% <small>+3.4</small></td>
+            </tr>
+            
+            <tr>
+              <td class="model-name">Llama-3.3-70B</td>
+              <td>4.8%</td>
+              <td class="delta-pos">6.0% <small>+1.2</small></td>
+              <td class="delta-pos">8.4% <small>+3.6</small></td>
+              <td>11.5%</td>
+              <td class="delta-neutral">11.5% <small>+0.0</small></td>
+              <td class="delta-pos-strong">23.1% <small>+11.5</small></td>
+              <td>3.6%</td>
+              <td class="delta-pos">7.1% <small>+3.6</small></td>
+              <td class="delta-neg">0.0% <small>−3.6</small></td>
+              <td>0.0%</td>
+              <td class="delta-neutral">0.0% <small>+0.0</small></td>
+              <td class="delta-pos">3.4% <small>+3.4</small></td>
+            </tr>
+            
+            <tr>
+              <td class="model-name">Gemma-3-27B</td>
+              <td>3.6%</td>
+              <td class="delta-neg">2.4% <small>−1.2</small></td>
+              <td class="delta-pos">8.4% <small>+4.8</small></td>
+              <td>7.7%</td>
+              <td class="delta-neg">3.8% <small>−3.8</small></td>
+              <td class="delta-pos-strong">23.1% <small>+15.4</small></td>
+              <td>3.6%</td>
+              <td class="delta-neutral">3.6% <small>+0.0</small></td>
+              <td class="delta-neutral">3.6% <small>+0.0</small></td>
+              <td>0.0%</td>
+              <td class="delta-neutral">0.0% <small>+0.0</small></td>
+              <td class="delta-neutral">0.0% <small>+0.0</small></td>
+            </tr>
+            
+            <tr class="avg-row">
+              <td class="model-name">Open Source Avg</td>
+              <td>16.4%</td>
+              <td class="delta-neg">15.6% <small>−0.9</small></td>
+              <td class="delta-pos-strong">27.4% <small>+11.0</small></td>
+              <td>33.2%</td>
+              <td class="delta-pos">33.6% <small>+0.3</small></td>
+              <td class="delta-pos-strong">49.0% <small>+15.7</small></td>
+              <td>14.6%</td>
+              <td class="delta-neg">12.7% <small>−1.9</small></td>
+              <td class="delta-pos-strong">26.6% <small>+12.0</small></td>
+              <td>3.1%</td>
+              <td class="delta-neg">2.2% <small>−0.9</small></td>
+              <td class="delta-pos-strong">8.8% <small>+5.6</small></td>
+            </tr>
+            
+            <!-- Overall -->
+            <tr class="overall-row">
+              <td class="model-name">Overall Average</td>
+              <td>23.2%</td>
+              <td class="delta-neg">23.1% <small>−0.1</small></td>
+              <td class="delta-pos-strong">37.7% <small>+14.5</small></td>
+              <td>41.3%</td>
+              <td class="delta-pos">43.1% <small>+1.8</small></td>
+              <td class="delta-pos-strong">59.9% <small>+18.6</small></td>
+              <td>22.2%</td>
+              <td class="delta-neg">21.6% <small>−0.5</small></td>
+              <td class="delta-pos-strong">39.1% <small>+16.9</small></td>
+              <td>8.0%</td>
+              <td class="delta-neg">6.5% <small>−1.5</small></td>
+              <td class="delta-pos-strong">16.5% <small>+8.5</small></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <p style="font-size: 14px; color: var(--muted); margin-top: 16px;">
+        <strong>Legend:</strong> 
+        <span style="background: #dcfce7; padding: 2px 8px; border-radius: 4px; margin-left: 8px;">+small</span>
+        <span style="background: #bbf7d0; padding: 2px 8px; border-radius: 4px; margin-left: 4px;">+medium</span>
+        <span style="background: #86efac; padding: 2px 8px; border-radius: 4px; margin-left: 4px;">+large</span>
+        <span style="background: #fee2e2; padding: 2px 8px; border-radius: 4px; margin-left: 8px;">−decline</span>
+        <span style="background: #f5f5f5; padding: 2px 8px; border-radius: 4px; margin-left: 4px;">neutral</span>
+        · <strong>Bold</strong> = best in category · <u>Underline</u> = second best
+      </p>
+
+      <div class="grid2">
+        <figure>
+          <img src="assets/figs/ladder_rank_percentile_mean.png" alt="Virtual rank percentile" />
+          <figcaption>
+            Mean virtual rank percentile under w/oEd, w/GenEd, and w/GoldEd (higher is better). Gold editorials yield large and consistent improvements (up to &sim;0.4), yet even under gold guidance only a small number of models attain high rank percentiles (above &sim;0.8), with only a handful exceeding &sim;0.7.
+        </figure>
+
+        <figure>
+          <img src="assets/figs/stacked_failure_by_model_counts.png" alt="Failure distribution" />
+          <figcaption>
+           Aggregate failure verdict distribution across <em>all</em> editorial settings: Wrong Answer (WA), Time Limit Exceeded (TLE), Runtime Error (RTE), Compile Error (CE), and Memory Limit Exceeded (MLE). Remaining failures are dominated by WA, while TLE becomes more salient for some stronger models (notably Claude)
+          </figcaption>
+        </figure>
+        </div>
+        <div class="grid">
+      
+          <figure>
+        <img src="assets/figs/merged_cross_editorial_3coders.png" alt="Cross-model transfer" />
+        <figcaption>
+         Cross-model editorial transfer.
+Each bar reports pass@1 when a fixed coder implements an editorial written by a different model.
+Using editorials from stronger writers often improves weaker coders and can occasionally yield
+performance competitive with or exceeding the writer’s own end-to-end results.
+      </figure>
+      </div>
+
+      <h3>Why Do Generated Editorials Fail?</h3>
+    <p>
+      We adopt an <strong>LLM-as-a-judge</strong> to label model-generated editorials against gold editorials using the same
+      rubric as the expert annotator. Across models, the dominant failure mode is
+      <strong>wrong algorithm</strong>—i.e., incorrect problem solving—rather than purely implementation errors.
+      Frontier models produce a larger share of judge-<span style="font-variant: small-caps;">Correct</span> plans, but
+      <em>wrong algorithm</em> remains the most common error across many models.
+    </p>
+      <div class="grid2">
+        <figure>
+          <img src="assets/figs/fig_B1_model_six_way_stacked_fraction.png" alt="Editorial correctness" />
+          <figcaption>
+            Six-way editorial correctness breakdown labeled by the LLM-as-a-judge. Frontier models produce more judge-\textsc{Correct} plans, but \emph{wrong algorithm}—i.e., incorrect problem solving—remains the dominant error across many models.
+          </figcaption>
+        </figure>
+
+        <figure>
+          <img src="assets/figs/fig_B4b_algcor_category_vs_verdict_stacked_count.png" alt="Verdicts by correctness" />
+          <figcaption>
+            Downstream verdict distribution (PASS/WA/TLE/RTE/CE/MLE) conditioned on editorial correctness labels. Editorial correctness labels meaningfully stratify downstream outcomes.
+          </figcaption>
+        </figure>
+      </div>
+
+
+    </section>
+
+<section id="annotations">
+  <h2>Annotation Guidelines</h2>
+  <p>
+    We annotate each <strong>model-generated editorial</strong> against the problem statement and the
+    <strong>gold editorial</strong> using a structured rubric with three parts:
+    <span class="pill blue">PU</span>
+    <span class="pill blue">ALG</span>
+    <span class="pill blue">ALG-COR</span>.
+    This is the same layout used in our Excel annotation template.
+  </p>
+
+  <h3>Excel-style annotation sheet layout</h3>
+  <p style="color: var(--muted); font-size: 14px; margin-bottom: 10px;">
+    Column groups mirror the spreadsheet: metadata → Problem Understanding → Algorithm Description → Algorithm Correctness.
+  </p>
+
+  <div class="sheet-wrap">
+    <table class="sheet-table" aria-label="Annotation template">
+      <thead>
+        <tr class="grp">
+          <th class="g-meta sticky" colspan="5">Metadata</th>
+          <th class="g-pu" colspan="7">Problem Understanding (PU)</th>
+          <th class="g-alg" colspan="7">Algorithm Description (ALG)</th>
+          <th class="g-cor" colspan="5">Algorithm Correctness (ALG-COR)</th>
+        </tr>
+        <tr class="sub">
+          <th class="sticky">Problem ID</th>
+          <th>Statement</th>
+          <th>Gold editorial</th>
+          <th>Model ID</th>
+          <th>Model editorial</th>
+
+          <th>PU-W</th>
+          <th>Type</th>
+          <th>PU-M</th>
+          <th>Type</th>
+          <th>PU-X</th>
+          <th>PU-D</th>
+          <th>Comments</th>
+
+          <th>ALG-TAG</th>
+          <th>Other</th>
+          <th>ALG-FREE</th>
+          <th>Golden-TAG</th>
+          <th>Other</th>
+          <th>Golden-FREE</th>
+          <th>Comments</th>
+
+          <th>ALG-COR</th>
+          <th>Correct type</th>
+          <th>Why incorrect</th>
+          <th>Severity</th>
+          <th>Comments</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="sticky"><code>arts_and_computing_students</code></td>
+          <td><code>statement.md</code></td>
+          <td><code>analysis.md</code></td>
+          <td><code>0</code></td>
+          <td><code>editorial.md</code></td>
+
+          <td><span class="pill gray">No</span></td>
+          <td><span class="pill gray">—</span></td>
+          <td><span class="pill gray">No</span></td>
+          <td><span class="pill gray">—</span></td>
+          <td><span class="pill yellow">Minor</span></td>
+          <td><span class="pill gray">2</span></td>
+          <td style="color: var(--muted);">Short notes…</td>
+
+          <td><span class="pill blue">Greedy</span> <span class="pill blue">DP</span></td>
+          <td style="color: var(--muted);">[]</td>
+          <td style="color: var(--muted);">~40-word summary…</td>
+          <td><span class="pill blue">DP</span></td>
+          <td style="color: var(--muted);">[]</td>
+          <td style="color: var(--muted);">~40-word summary…</td>
+          <td style="color: var(--muted);">Notes…</td>
+
+          <td><span class="pill green">Correct</span></td>
+          <td><span class="pill gray">Same as golden</span></td>
+          <td><span class="pill gray">—</span></td>
+          <td><span class="pill gray">—</span></td>
+          <td style="color: var(--muted);">Notes…</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p style="color: var(--muted); font-size: 14px;">
+    <strong>Legend:</strong>
+    <span class="pill green">Correct / PASS</span>
+    <span class="pill red">Incorrect / WA</span>
+    <span class="pill yellow">Suboptimal / TLE-risk</span>
+    <span class="pill gray">N/A</span>
+  </p>
+
+  <h3>Full rubric (definitions)</h3>
+
+  <div class="rubric">
+    <details open>
+      <summary>
+        <span class="rubric-dot pu"></span>
+        1) Problem Understanding (PU)
+      </summary>
+      <p class="rubric-note">
+        Purpose: Verify that the editorial accurately captures every essential detail of the problem statement—no mis‑read constraints, missing subtleties, or misleading additions.
+      </p>
+      <div class="rubric-table-wrap">
+        <table class="rubric-table">
+          <thead>
+            <tr><th>Field</th><th>What to check</th><th>Allowed values</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>PU-W</strong></td>
+              <td>Does the editorial state a <em>wrong crucial detail</em> that changes the problem meaning?</td>
+              <td><span class="pill gray">Yes</span> <span class="pill gray">No</span></td>
+              <td>If <strong>Yes</strong>, mark <em>explicit</em> vs <em>implicit</em> misinformation.</td>
+            </tr>
+            <tr>
+              <td><strong>PU-M</strong></td>
+              <td>Was a constraint or subtlety that affects the problem's meaning skipped?</td>
+              <td><span class="pill gray">Yes</span> <span class="pill gray">No</span></td>
+              <td>If <strong>Yes</strong>, mark whether missing info is explicit vs implicit in the statement.</td>
+            </tr>
+            <tr>
+              <td><strong>PU-X</strong></td>
+              <td>Extra statements that do not change correctness but muddy understanding.</td>
+              <td><span class="pill gray">None</span> <span class="pill yellow">Minor</span> <span class="pill red">Major</span></td>
+              <td>Use <strong>Major</strong> if it strongly steers the reader toward a wrong model.</td>
+            </tr>
+            <tr>
+              <td><strong>PU-D</strong></td>
+              <td>How hard is the original problem statement to understand?</td>
+              <td><span class="pill gray">0</span> … <span class="pill gray">5</span></td>
+              <td>0 = very clear, 5 = extremely difficult.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="rubric-dot alg"></span>
+        2) Algorithm Description (ALG)
+      </summary>
+      <p class="rubric-note">
+        Purpose: Assess the high‑level idea/algorithm choice.
+      </p>
+      <div class="rubric-table-wrap">
+        <table class="rubric-table">
+          <thead>
+            <tr><th>Field</th><th>What to record</th><th>Allowed values</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ALG-TAG</strong></td>
+              <td>The high‑level idea/algorithm described in the LLM‑generated editorial</td>
+              <td style="line-height: 2;">
+                Choose one or more paradigms: ex:
+                <span class="pill blue">DP</span><span class="pill blue">Greedy</span><span class="pill blue">DFS/BFS</span>
+                <span class="pill blue">Dijkstra</span><span class="pill blue">Segment Tree</span><span class="pill blue">Binary Lifting</span>
+                <span class="pill blue">FFT</span><span class="pill blue">Flow</span><span class="pill blue">Geometry</span>
+                <span class="pill blue">Math/Number Theory</span><span class="pill gray">Other</span>
+              </td>
+              <td>If <strong>Other</strong>, fill <code>ALG-TAG-OTHER</code> with specific names.</td>
+            </tr>
+            <tr>
+              <td><strong>ALG-FREE</strong></td>
+              <td>Write one or two concise sentences (~ 40 words) summarising the core idea.</td>
+              <td><span class="pill gray">Free text</span></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><strong>Golden-ALG-TAG </strong></td>
+              <td>The high‑level idea/algorithm described in the gold‑standard editorial (for reference only).</td>
+              <td style="line-height: 2;">
+                Choose one or more paradigms: ex:
+                <span class="pill blue">DP</span><span class="pill blue">Greedy</span><span class="pill blue">DFS/BFS</span>
+                <span class="pill blue">Dijkstra</span><span class="pill blue">Segment Tree</span><span class="pill blue">Binary Lifting</span>
+                <span class="pill blue">FFT</span><span class="pill blue">Flow</span><span class="pill blue">Geometry</span>
+                <span class="pill blue">Math/Number Theory</span><span class="pill gray">Other</span>
+              </td>
+              <td>If <strong>Other</strong>, fill <code>ALG-TAG-OTHER</code> with specific names.</td>
+            </tr>
+            <tr>
+              <td><strong>Golden-ALG-FREE</strong></td>
+              <td>Write one or two concise sentences (~ 40 words) summarising the core idea.</td>
+              <td><span class="pill gray">Free text</span></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="rubric-dot cor"></span>
+        3) Algorithm Correctness (ALG-COR)
+      </summary>
+      <p class="rubric-note">
+        Purpose: Judge whether the editorial’s algorithm—as described—actually solves the problem correctly and efficiently within the stated constraints.
+      </p>
+      <div class="rubric-table-wrap">
+        <table class="rubric-table">
+          <thead>
+            <tr><th>Field</th><th>Meaning</th><th>Allowed values</th><th>Examples / notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ALG-COR</strong></td>
+              <td>Overall correctness of the model editorial's algorithm <em>as described</em>.</td>
+              <td><span class="pill green">Correct</span> <span class="pill red">Incorrect</span></td>
+              <td>"Correct" The editorial’s method always solves the problem under the stated constraints; otherwise "Incorrect".</td>
+            </tr>
+            <tr>
+              <td><strong>Correct type</strong> (if Correct)</td>
+              <td>Whether it matches the gold approach.</td>
+              <td><span class="pill gray">Same as golden</span> <span class="pill gray">Different from golden</span></td>
+              <td><span class="pill gray">Same as golden</span>: Matches the official solution exactly, Example: Tags the approach as “DP” and implements the correct recurrence exactly as in the gold editorial.<span class="pill gray">Different from golden</span>: Uses a different but equally valid approach, Example: Uses a greedy approach instead of DP, but still works within the problem constraints.</td>
+              <!-- <td>Different is fine if it's valid + efficient.</td> -->
+            </tr>
+            <tr>
+              <td><strong>Why incorrect</strong> (if Incorrect)</td>
+              <td>Primary failure mode diagnosis.</td>
+              <td style="line-height: 2;">
+                <span class="pill red">Wrong algorithm</span>
+                <span class="pill red">Correct algorithm but incorrect approach</span>
+                <span class="pill yellow">Suboptimal (Likely TLE or MLE), but correct algorithm</span>
+                <span class="pill red">Suboptimal (Likely TLE or MLE), and wrong algorithm</span>
+              </td>
+              <td>
+                <span class="pill red">Wrong algorithm (WA)</span>: <br>Explanation: high‑level idea/algorithm choice itself is unsuitable—there’s no way this approach ever solves the full problem.
+                <br> Example: uses dp for a graph problem
+                <span class="pill red">Correct algorithm but incorrect approach (WA)</span>: <br> Explanation: The intended high‑level idea/algorithm choice is sound, but an implementation mistake breaks correctness.
+                <br>Example: Implements binary search but miscomputes mid so it never converges.
+                <br><span class="pill yellow">Suboptimal (Likely TLE or MLE), but correct algorithm</span>: <br> 
+                Explanation: The algorithm returns correct answers yet violates resource limits in worst-case scenarios. The choice of algorithm is correct, but it needs tweaking to fit the time or memory limits.
+                <br> Example: Uses a higher-complexity method than required, so will time out on large inputs. Or Uses excessive memory (e.g., stores full N×N matrix) instead of a linear or in-place approach.
+                <br>  <span class="pill red">Suboptimal (Likely TLE or MLE), and wrong algorithm</span>: <br>
+                Explanation: The algorithm returns correct answers yet violates resource limits in worst-case scenarios because of the wrong choice of algorithm.
+                <br>Example: Uses brute-force, or DP for a problem that needs greedy solution.
+
+
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Severity</strong> (if Incorrect)</td>
+              <td>How much fixing is needed to make it correct.</td>
+              <td><span class="pill red">Completely wrong</span> <span class="pill yellow">Major edits needed</span> <span class="pill gray">Minor edits needed</span></td>
+              <td> <span class="pill red">Completely wrong</span>: No part of the solution can be salvaged; high‑level idea/algorithm choice and implementation bear no relation to a valid strategy. <br> 
+              <span class="pill yellow">Major edits needed</span>: Core structure almost works but requires re-architecting key parts. <br>
+              <span class="pill gray">Minor edits needed</span>: A small tweak—off-by-one fix, missing boundary check, or one initialization—will restore full correctness.</td>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+  </div>
+
+  <details>
+    <summary>Optional: JSON schema for LLM-as-a-judge outputs</summary>
+    <pre><code>{
+  "PU": { "PU-W": {...}, "PU-M": {...}, "PU-X": {...}, "PU-D": {...} },
+  "ALG": { "ALG-TAG": [...], "ALG-TAG-OTHER": [...], "ALG-FREE": "...",
+           "Golden-ALG-TAG": [...], "Golden-ALG-TAG-OTHER": [...], "Golden-ALG-FREE": "..." },
+  "ALG-COR": {
+    "overall": "Correct|Incorrect",
+    "if_correct": { "correct_type": "Same as golden|Different from golden|null", "notes": "..." },
+    "if_incorrect": { "why_incorrect": "...|null", "severity": "...|null", "diagnosis": "...|null" }
+  }
+}</code></pre>
+  </details>
+</section>
+
+    <section id="citation">
+      <h2>Citation</h2>
+      <pre><code>@misc{hadhoud2026ideafirstcodelater,
+  title={Idea First, Code Later: Disentangling Problem Solving from Code Generation in Evaluating LLMs for Competitive Programming},
+  author={Sama Hadhoud and Alaa Elsetohy and Frederikus Hudi and Jan Christian Blaise Cruz and Steven Halim and Alham Fikri Aji},
+  year={2026},
+  eprint={2601.11332},
+  archivePrefix={arXiv},
+  primaryClass={cs.CL},
+  url={https://arxiv.org/abs/2601.11332},
+}</code></pre>
+    </section>
+
+    <footer>
+      Questions? Reach out at <a href="mailto:sama.hadhoud@mbzuai.ac.ae">sama.hadhoud@mbzuai.ac.ae</a>
+    </footer>
+
+  </div>
+</body>
+</html>
